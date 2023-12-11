@@ -19,7 +19,6 @@ if not vim.loop.fs_stat(lazypath) then
   }
 end
 vim.opt.rtp:prepend(lazypath)
--- vim.cmd([[ let g:neo_tree_remove_legacy_commands = 1 ]])
 
 -- [[ Configure plugins ]]
 -- NOTE: Here is where you install your plugins.
@@ -44,12 +43,9 @@ require('lazy').setup({
     version = "*",
     dependencies = {
       "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
       "MunifTanjim/nui.nvim",
     },
-    config = function()
-      require('neo-tree').setup {}
-    end,
+
   },
 
 
@@ -89,6 +85,22 @@ require('lazy').setup({
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
     },
+  },
+  -- autopairs brackets
+  {
+    "windwp/nvim-autopairs",
+    -- Optional dependency
+    dependencies = { 'hrsh7th/nvim-cmp' },
+    config = function()
+      require("nvim-autopairs").setup {}
+      -- If you want to automatically add `(` after selecting a function or method
+      local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+      local cmp = require('cmp')
+      cmp.event:on(
+        'confirm_done',
+        cmp_autopairs.on_confirm_done()
+      )
+    end,
   },
 
   -- Useful plugin to show you pending keybinds.
@@ -168,14 +180,7 @@ require('lazy').setup({
     },
   },
 
-  -- {
-  --   -- Theme inspired by Atom
-  --   'navarasu/onedark.nvim',
-  --   priority = 1000,
-  --   config = function()
-  --     vim.cmd.colorscheme 'onedark'
-  --   end,
-  -- },
+
   {
     "catppuccin/nvim",
     name = "catppuccin",
@@ -188,19 +193,13 @@ require('lazy').setup({
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`
-    dependencies = {
-      'kyazdani42/nvim-web-devicons',
-    },
     opts = {
-      icons_enabled = true,
-      theme = 'auto',
-      section_separators = { left = '', right = '' },
-      component_separators = { left = '/', right = '' },
-      disabled_filetypes = {
-        statuslines = {},
-        winbar = {},
+      options = {
+        icons_enabled = true,
+        theme = 'auto',
+        component_separators = { left = '/', right = '(' },
+        section_separators = { left = '', right = '', },
       },
-      ignore_focus = {},
       extensions = { 'neo-tree' },
     },
   },
@@ -211,11 +210,12 @@ require('lazy').setup({
     -- Enable `lukas-reineke/indent-blankline.nvim`
     -- See `:help ibl`
     main = 'ibl',
-    opts = {},
   },
 
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
+
+
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -223,8 +223,12 @@ require('lazy').setup({
     branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
-      'jvgrootveld/telescope-zoxide',
-
+      {
+        'jvgrootveld/telescope-zoxide',
+        opts = {
+          prompt_title = 'Find Folders',
+        },
+      },
       -- Fuzzy Finder Algorithm which requires local dependencies to be built.
       -- Only load if `make` is available. Make sure you have the system
       -- requirements installed.
@@ -310,6 +314,10 @@ vim.o.termguicolors = true
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
+vim.keymap.set('n', ';', ':', { silent = true })
+
+-- save file
+vim.keymap.set('n', '<C-s>', vim.cmd.update, { silent = true })
 
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -320,6 +328,14 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous dia
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+
+-- NeoTree keymaps
+vim.keymap.set('n', '<M-e>', ':Neotree left toggle <CR>', { desc = 'Toggle NeoTree', silent = true })
+vim.keymap.set('n', '<M-E>', ':Neotree float toggle reveal_force_cwd<CR>',
+  { desc = 'Toggle NeoTree with details', silent = true })
+
+-- lazygit keymaps
+vim.keymap.set('n', '<leader>l', require('lazygit').lazygit, { desc = 'Open lazygit', silent = true })
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -412,7 +428,7 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
-
+vim.keymap.set('n', '<leader>sF', require('telescope._extensions.zoxide.list'), { desc = '[S]earch [F]olders' })
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
 -- Defer Treesitter setup after first render to improve startup time of 'nvim {filename}'
@@ -420,6 +436,8 @@ vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
     ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash' },
+    sync_install = false,
+    ignore_install = {},
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
