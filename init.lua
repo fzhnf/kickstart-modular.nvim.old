@@ -39,11 +39,12 @@ require('lazy').setup({
   -- Unless you are still migrating, remove the deprecated commands from v1.x
 
   {
-    "nvim-neo-tree/neo-tree.nvim",
-    version = "*",
+    'nvim-neo-tree/neo-tree.nvim',
+    version = '*',
     dependencies = {
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons',
+      'MunifTanjim/nui.nvim',
     },
 
   },
@@ -70,7 +71,6 @@ require('lazy').setup({
       'folke/neodev.nvim',
     },
   },
-
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -182,16 +182,23 @@ require('lazy').setup({
 
 
   {
-    "catppuccin/nvim",
-    name = "catppuccin",
+    'catppuccin/nvim',
+    name = 'catppuccin',
     priority = 1000,
     config = function()
       vim.cmd.colorscheme 'catppuccin'
     end,
   },
   {
+    'akinsho/bufferline.nvim',
+
+    version = "*",
+    dependencies = 'nvim-tree/nvim-web-devicons',
+  },
+  {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
+    dependencies = 'nvim-tree/nvim-web-devicons',
     -- See `:help lualine.txt`
     opts = {
       options = {
@@ -223,12 +230,7 @@ require('lazy').setup({
     branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
-      {
-        'jvgrootveld/telescope-zoxide',
-        opts = {
-          prompt_title = 'Find Folders',
-        },
-      },
+      'jvgrootveld/telescope-zoxide',
       -- Fuzzy Finder Algorithm which requires local dependencies to be built.
       -- Only load if `make` is available. Make sure you have the system
       -- requirements installed.
@@ -247,9 +249,7 @@ require('lazy').setup({
   {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
-    },
+    dependencies = 'nvim-treesitter/nvim-treesitter-textobjects',
     build = ':TSUpdate',
   },
 
@@ -271,6 +271,9 @@ require('lazy').setup({
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
+
+-- Move to next/previous line
+vim.opt.whichwrap:append('<>[]hl')
 
 -- Set highlight on search
 vim.o.hlsearch = true
@@ -316,6 +319,18 @@ vim.o.termguicolors = true
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('n', ';', ':', { silent = true })
 
+-- switch manage buffers
+vim.keymap.set('n', '<Tab>', ':bnext<CR>', { silent = true })
+vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { silent = true })
+vim.keymap.set('n', '<leader>x', ':bdelete<CR>', { silent = true })
+-- toggle line number
+vim.keymap.set('n', '<leader>n', function()
+  vim.wo.number = not vim.wo.number
+end, { desc = 'Toggle line number' })
+vim.keymap.set('n', '<leader>N', function()
+  vim.wo.relativenumber = not vim.wo.relativenumber
+end, { desc = 'Toggle relative number' })
+
 -- save file
 vim.keymap.set('n', '<C-s>', vim.cmd.update, { silent = true })
 
@@ -330,6 +345,7 @@ vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open float
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
 -- NeoTree keymaps
+vim.keymap.set('n', '<leader>e', ':Neotree focus<CR>', { desc = 'NeoTree', silent = true })
 vim.keymap.set('n', '<M-e>', ':Neotree left toggle <CR>', { desc = 'Toggle NeoTree', silent = true })
 vim.keymap.set('n', '<M-E>', ':Neotree float toggle reveal_force_cwd<CR>',
   { desc = 'Toggle NeoTree with details', silent = true })
@@ -348,6 +364,23 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
+-- [[ Configure bufferline ]]
+require('bufferline').setup {
+  options = {
+    mode                   = "buffers", -- set to "tabs" to only show tabpages instead
+    always_show_bufferline = false,
+    diagnostics            = "nvim_lsp",
+    offsets                = {
+      {
+        filetype = "neo-tree",
+        text = "File Explorer",
+        highlight = "Directory",
+        text_align = "left"
+      }
+    },
+  },
+
+}
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
@@ -359,9 +392,14 @@ require('telescope').setup {
       },
     },
   },
+  extensions = {
+    zoxide = {
+      prompt_title = 'Find Folders',
+    },
+  },
 }
 
--- Enable telescope fzf native, if installed
+-- Enable telescope fzf native and zoxide, if installed
 pcall(require('telescope').load_extension, 'fzf')
 pcall(require("telescope").load_extension, 'zoxide')
 
@@ -428,7 +466,7 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
-vim.keymap.set('n', '<leader>sF', require('telescope._extensions.zoxide.list'), { desc = '[S]earch [F]olders' })
+vim.keymap.set('n', '<leader>sF', require('telescope').extensions.zoxide.list, { desc = '[S]earch [F]olders' })
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
 -- Defer Treesitter setup after first render to improve startup time of 'nvim {filename}'
