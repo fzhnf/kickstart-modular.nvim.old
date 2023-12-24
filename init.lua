@@ -3,7 +3,6 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
-
 -- [[ Install `lazy.nvim` plugin manager ]]
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -27,18 +26,6 @@ require('lazy').setup({
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
 
-  -- Unless you are still migrating, remove the deprecated commands from v1.x
-  {
-    'nvim-neo-tree/neo-tree.nvim',
-    version = '*',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-tree/nvim-web-devicons',
-      'MunifTanjim/nui.nvim',
-    },
-
-  },
-
   -- NOTE: This is where your plugins related to LSP can be installed.
   {
     -- LSP Configuration & Plugins
@@ -46,16 +33,11 @@ require('lazy').setup({
     dependencies = {
       -- Automatically install LSPs to stdpath for neovim
       'williamboman/mason.nvim',
-      {
-        'williamboman/mason-lspconfig.nvim',
+      'williamboman/mason-lspconfig.nvim',
 
-      },
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      {
-        'j-hui/fidget.nvim',
-        opts = {},
-      },
+      { 'j-hui/fidget.nvim', opts = {}, },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -167,7 +149,6 @@ require('lazy').setup({
       end,
     },
   },
-
   {
     'catppuccin/nvim',
     name = 'catppuccin',
@@ -176,14 +157,24 @@ require('lazy').setup({
       vim.cmd.colorscheme 'catppuccin'
     end,
   },
-
+  {
+    'nvim-neo-tree/neo-tree.nvim',
+    version = '*',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons',
+      'MunifTanjim/nui.nvim',
+    },
+    config = function()
+      require('neo-tree').setup {}
+    end,
+  },
   {
     'akinsho/bufferline.nvim',
 
     version = "*",
     dependencies = 'nvim-tree/nvim-web-devicons',
   },
-
   {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
@@ -209,6 +200,8 @@ require('lazy').setup({
   { 'numToStr/Comment.nvim', opts = {} },
 
 
+  "ggandor/leap.nvim",
+
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -233,6 +226,11 @@ require('lazy').setup({
     dependencies = 'nvim-treesitter/nvim-treesitter-textobjects',
     build = ':TSUpdate',
   },
+  {
+    "m4xshen/hardtime.nvim",
+    dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },
+    opts = {}
+  },
 
   require 'kickstart.plugins.autoformat',
   --  require 'kickstart.plugins.debug',
@@ -245,9 +243,6 @@ require('lazy').setup({
 
 -- Move to next/previous line
 vim.opt.whichwrap:append '<>[]hl'
-
--- load buffer when open neovim
-vim.o.shada = "%,'100"
 
 -- indent
 vim.opt.expandtab = true
@@ -339,6 +334,11 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
+
+--[[ for training vim motion]]
+-- require("hardtime").setup()
+-- require('leap').add_default_mappings()
+
 
 -- [[ Configure bufferline ]]
 require('bufferline').setup {
@@ -463,8 +463,6 @@ vim.defer_fn(function()
       'html',
       'json',
     },
-    sync_install = false,
-    ignore_install = {},
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
@@ -477,7 +475,7 @@ vim.defer_fn(function()
         init_selection = '<c-space>',
         node_incremental = '<c-space>',
         scope_incremental = '<c-s>',
-        node_decremental = '<M-space>',
+        node_decremental = '<C-S-space>',
       },
     },
     textobjects = {
@@ -595,11 +593,19 @@ require('mason-lspconfig').setup()
 --  Add any additional override configuration in the following tables. They will be passed to
 --  the `settings` field of the server config. You must look up that documentation yourself.
 local servers = {
-  clangd = {},
+  -- clangd = {},
   -- gopls = {},
-  pyright = {},
-  rust_analyzer = {},
-  tsserver = {},
+  -- pyright = {},
+  -- rust_analyzer = {},
+  -- tsserver = {},
+  -- eslint = {
+  --   settings = {
+  --     codeActionOnSave = {
+  --       enable = true,
+  --       mode = 'all',
+  --     },
+  --   },
+  -- },
   html = { filetypes = { 'html', 'twig', 'hbs' } },
 
   lua_ls = {
@@ -684,6 +690,7 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = 'path' },
   },
 }
 

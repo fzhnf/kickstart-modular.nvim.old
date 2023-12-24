@@ -31,4 +31,5 @@ return {
     cmd = "LazyGit",
     dependencies = { "nvim-lua/plenary.nvim" },
   },
+
 }
