@@ -36,11 +36,11 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim',       opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
 
-      { 'folke/neodev.nvim',       opts = {} },
+      { 'folke/neodev.nvim', opts = {} },
     },
   },
   {
@@ -72,7 +72,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim',  opts = {} },
+  { 'folke/which-key.nvim', opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -226,6 +226,7 @@ require('lazy').setup({
         section_separators = { left = '', right = '' },
       },
       extensions = { 'neo-tree' },
+      ignore_focus = { 'neo-tree' },
     },
   },
 
@@ -273,8 +274,6 @@ vim.opt.sw = 2
 vim.opt.si = true
 vim.opt.ts = 2
 vim.opt.sts = 2
-
-vim.o.sd = "!,%,'100,<50,s10,h,"
 
 -- Set highlight on search
 vim.o.hls = false
@@ -345,10 +344,10 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.open_float, { desc = 'Open float
 vim.keymap.set('n', '<leader>Q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
 -- NeoTree keymaps
-vim.keymap.set('n', '<M-e>', ':Neotree toggle left<CR>', { silent = true })
-
+vim.keymap.set('n', '<M-e>', ':Neotree toggle <CR>', { silent = true })
+vim.keymap.set('n', '<leader>e', ':Neotree focus left<CR>', { silent = true })
 -- lazygit keymaps
-vim.keymap.set('n', '<leader>l', require('lazygit').lazygit, { silent = true })
+vim.keymap.set('n', '<leader>gl', require('lazygit').lazygit, { desc = '[L]azygit', silent = true })
 
 -- [[ Highlight on yank ]]
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
@@ -438,7 +437,7 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
-vim.keymap.set('n', '<leader>sz', require('telescope').extensions.zoxide.list, { desc = '[S]earch [Z]oxide List' })
+vim.keymap.set('n', '<leader>sl', require('telescope').extensions.zoxide.list, { desc = '[S]earch Zoxide [L]ist' })
 -- [[ Configure Treesitter ]]
 -- Defer Treesitter setup after first render to improve startup time of 'nvim {filename}'
 vim.defer_fn(function()
