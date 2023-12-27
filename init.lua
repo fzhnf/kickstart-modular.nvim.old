@@ -1,5 +1,4 @@
 -- Set <space> as the leader key
---  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
@@ -25,22 +24,23 @@ require('lazy').setup({
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-
+  'nvim-tree/nvim-web-devicons',
   -- NOTE: This is where your plugins related to LSP can be installed.
   {
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs to stdpath for neovim
-      'williamboman/mason.nvim',
+      { 'williamboman/mason.nvim', config = true },
       'williamboman/mason-lspconfig.nvim',
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {}, },
+      { 'j-hui/fidget.nvim',       opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
-      'folke/neodev.nvim',
+
+      { 'folke/neodev.nvim',       opts = {} },
     },
   },
   {
@@ -53,21 +53,19 @@ require('lazy').setup({
 
       -- Adds LSP completion capabilities
       'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-path',
 
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
       {
         -- autopairs brackets
-        "windwp/nvim-autopairs",
+        'windwp/nvim-autopairs',
         config = function()
-          require("nvim-autopairs").setup {}
+          require('nvim-autopairs').setup {}
           -- If you want to automatically add `(` after selecting a function or method
-          local cmp_autopairs = require('nvim-autopairs.completion.cmp')
-          local cmp = require('cmp')
-          cmp.event:on(
-            'confirm_done',
-            cmp_autopairs.on_confirm_done()
-          )
+          local cmp_autopairs = require 'nvim-autopairs.completion.cmp'
+          local cmp = require 'cmp'
+          cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
         end,
       },
     },
@@ -152,8 +150,12 @@ require('lazy').setup({
   {
     'catppuccin/nvim',
     name = 'catppuccin',
-    priority = 1000,
-    config = function()
+    lazy = false,
+    opts = {
+      flavour = 'mocha',
+    },
+    config = function(_, opts)
+      require('catppuccin').setup(opts)
       vim.cmd.colorscheme 'catppuccin'
     end,
   },
@@ -162,46 +164,73 @@ require('lazy').setup({
     version = '*',
     dependencies = {
       'nvim-lua/plenary.nvim',
-      'nvim-tree/nvim-web-devicons',
       'MunifTanjim/nui.nvim',
+      '3rd/image.nvim',
     },
-    config = function()
-      require('neo-tree').setup {}
-    end,
+    opts = {
+      close_if_last_window = true, -- Close Neo-tree if it is the last window left in the tab
+      popup_border_style = 'rounded',
+    },
   },
   {
     'akinsho/bufferline.nvim',
-
-    version = "*",
-    dependencies = 'nvim-tree/nvim-web-devicons',
+    event = 'VeryLazy',
+    opts = {
+      options = {
+        mode = 'buffers', -- set to "tabs" to only show tabpages instead
+        always_show_bufferline = false,
+        diagnostics = 'nvim_lsp',
+        offsets = {
+          {
+            filetype = 'neo-tree',
+            text = 'File Explorer',
+            text_align = 'left',
+            separator = true,
+          },
+        },
+      },
+    },
+  },
+  {
+    -- Add indentation guides even on blank lines
+    'lukas-reineke/indent-blankline.nvim',
+    main = 'ibl',
+    event = 'BufRead',
+    opts = {
+      indent = {
+        char = '╎',
+        smart_indent_cap = true,
+        priority = 2,
+      },
+    },
+  },
+  {
+    -- "gc" to comment visual regions/lines
+    'numToStr/Comment.nvim',
+    event = 'BufRead',
+  },
+  {
+    -- Highlight, edit, and navigate code
+    'nvim-treesitter/nvim-treesitter',
+    dependencies = 'nvim-treesitter/nvim-treesitter-textobjects',
+    build = ':TSUpdate',
   },
   {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
-    dependencies = 'nvim-tree/nvim-web-devicons',
     opts = {
       options = {
         icons_enabled = true,
         theme = 'auto',
         component_separators = { left = '/', right = '(' },
-        section_separators = { left = '', right = '', },
+        section_separators = { left = '', right = '' },
       },
       extensions = { 'neo-tree' },
     },
   },
 
-  {
-    -- Add indentation guides even on blank lines
-    'lukas-reineke/indent-blankline.nvim',
-    main = 'ibl',
-  },
-
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
-
-
-  "ggandor/leap.nvim",
-
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -219,17 +248,11 @@ require('lazy').setup({
       },
     },
   },
-
   {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
-    dependencies = 'nvim-treesitter/nvim-treesitter-textobjects',
+    dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' },
     build = ':TSUpdate',
-  },
-  {
-    "m4xshen/hardtime.nvim",
-    dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },
-    opts = {}
   },
 
   require 'kickstart.plugins.autoformat',
@@ -242,60 +265,66 @@ require('lazy').setup({
 -- [[ Setting options ]]
 
 -- Move to next/previous line
-vim.opt.whichwrap:append '<>[]hl'
+vim.opt.ww:append '<>[]hl'
 
 -- indent
-vim.opt.expandtab = true
-vim.opt.shiftwidth = 2
-vim.opt.smartindent = true
-vim.opt.tabstop = 2
-vim.opt.softtabstop = 2
+vim.opt.et = true
+vim.opt.sw = 2
+vim.opt.si = true
+vim.opt.ts = 2
+vim.opt.sts = 2
 
 -- Set highlight on search
-vim.o.hlsearch = true
+vim.o.hls = false
 
--- Make line numbers default
-vim.wo.number = true
+-- Make Hybrid line numbers default
+vim.wo.nu = true
+vim.wo.rnu = true
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
 
 -- Sync clipboard between OS and Neovim.
-vim.o.clipboard = 'unnamedplus'
+vim.o.cb = 'unnamedplus'
 
 -- Enable break indent
-vim.o.breakindent = true
+vim.o.bri = true
 
 -- Save undo history
-vim.o.undofile = true
+vim.o.udf = true
 
 -- Case-insensitive searching UNLESS \C or capital in search
-vim.o.ignorecase = true
-vim.o.smartcase = true
+vim.o.ic = true
+vim.o.scs = true
 
 -- Keep signcolumn on by default
-vim.wo.signcolumn = 'yes'
+vim.wo.scl = 'yes'
 
 -- Decrease update time
-vim.o.updatetime = 250
-vim.o.timeoutlen = 300
+vim.o.ut = 250
+vim.o.tm = 300
 
 -- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
+vim.o.cot = 'menuone,noselect'
 
 -- NOTE: You should make sure your terminal supports this
-vim.o.termguicolors = true
+vim.o.tgc = true
 
 -- [[ Basic Keymaps ]]
 
 -- Keymaps for better default experience
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
-vim.keymap.set('n', ';', ':', { silent = true })
+vim.keymap.set('n', ';', ':')
+
+-- Remap for dealing with word wrap
+vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- switch manage buffers
 vim.keymap.set('n', '<Tab>', ':bnext<CR>', { silent = true })
 vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { silent = true })
 vim.keymap.set('n', '<leader>x', ':bdelete<CR>', { silent = true })
+
 -- toggle line number
 vim.keymap.set('n', '<leader>n', function()
   vim.wo.number = not vim.wo.number
@@ -307,10 +336,6 @@ end, { desc = 'Toggle relative number' })
 -- save file
 vim.keymap.set('n', '<C-s>', vim.cmd.update, { silent = true })
 
--- Remap for dealing with word wrap
-vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
@@ -318,9 +343,7 @@ vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open float
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
 -- NeoTree keymaps
-vim.keymap.set('n', '<leader>e', ':Neotree focus<CR>', { silent = true })
-vim.keymap.set('n', '<M-e>', ':Neotree left toggle <CR>', { silent = true })
-vim.keymap.set('n', '<M-E>', ':Neotree float toggle reveal_force_cwd<CR>', { silent = true })
+vim.keymap.set('n', '<M-e>', ':Neotree toggle left<CR>', { silent = true })
 
 -- lazygit keymaps
 vim.keymap.set('n', '<leader>l', require('lazygit').lazygit, { silent = true })
@@ -335,28 +358,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
---[[ for training vim motion]]
--- require("hardtime").setup()
--- require('leap').add_default_mappings()
-
-
--- [[ Configure bufferline ]]
-require('bufferline').setup {
-  options = {
-    mode                   = "buffers", -- set to "tabs" to only show tabpages instead
-    always_show_bufferline = false,
-    diagnostics            = "nvim_lsp",
-    offsets                = {
-      {
-        filetype = "neo-tree",
-        text = "File Explorer",
-        highlight = "Directory",
-        text_align = "left"
-      }
-    },
-  },
-
-}
 -- [[ Configure Telescope ]]
 require('telescope').setup {
   defaults = {
@@ -367,16 +368,11 @@ require('telescope').setup {
       },
     },
   },
-  extensions = {
-    zoxide = {
-      prompt_title = 'Find Folders',
-    },
-  },
 }
 
 -- Enable telescope fzf native and zoxide, if installed
 pcall(require('telescope').load_extension, 'fzf')
-pcall(require("telescope").load_extension, 'zoxide')
+pcall(require('telescope').load_extension, 'zoxide')
 
 -- Telescope live_grep in git root
 -- Function to find the git root directory based on the current buffer's path
@@ -440,7 +436,7 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
-vim.keymap.set('n', '<leader>sF', require('telescope').extensions.zoxide.list, { desc = '[S]earch [F]olders' })
+vim.keymap.set('n', '<leader>sz', require('telescope').extensions.zoxide.list, { desc = '[S]earch [Z]oxide List' })
 -- [[ Configure Treesitter ]]
 -- Defer Treesitter setup after first render to improve startup time of 'nvim {filename}'
 vim.defer_fn(function()
@@ -449,11 +445,9 @@ vim.defer_fn(function()
     ensure_installed = {
       'c',
       'cpp',
-      'go',
       'lua',
       'python',
       'rust',
-      'tsx',
       'javascript',
       'typescript',
       'vimdoc',
@@ -464,8 +458,7 @@ vim.defer_fn(function()
       'json',
     },
 
-    -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-    auto_install = false,
+    auto_install = true,
 
     highlight = { enable = true },
     indent = { enable = true },
@@ -589,30 +582,19 @@ require('which-key').register({
 require('mason').setup()
 require('mason-lspconfig').setup()
 
--- Enable the following language servers
---  Add any additional override configuration in the following tables. They will be passed to
---  the `settings` field of the server config. You must look up that documentation yourself.
 local servers = {
-  -- clangd = {},
+  clangd = {},
   -- gopls = {},
-  -- pyright = {},
-  -- rust_analyzer = {},
-  -- tsserver = {},
-  -- eslint = {
-  --   settings = {
-  --     codeActionOnSave = {
-  --       enable = true,
-  --       mode = 'all',
-  --     },
-  --   },
-  -- },
+  pyright = {},
+  rust_analyzer = {},
+  tsserver = {},
+  eslint = {},
   html = { filetypes = { 'html', 'twig', 'hbs' } },
 
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
-      -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
       diagnostics = { disable = { 'missing-fields' } },
     },
   },
@@ -661,7 +643,7 @@ cmp.setup {
   mapping = cmp.mapping.preset.insert {
     ['<C-n>'] = cmp.mapping.select_next_item(),
     ['<C-p>'] = cmp.mapping.select_prev_item(),
-    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete {},
     ['<CR>'] = cmp.mapping.confirm {
@@ -694,5 +676,4 @@ cmp.setup {
   },
 }
 
--- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
