@@ -24,7 +24,13 @@ require('lazy').setup({
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
+
+  -- enhanced tab scoping
+  'tiagovla/scope.nvim',
+
+  -- icons for plugins dependencies
   'nvim-tree/nvim-web-devicons',
+
   -- NOTE: This is where your plugins related to LSP can be installed.
   {
     -- LSP Configuration & Plugins
@@ -40,7 +46,7 @@ require('lazy').setup({
 
       -- Additional lua configuration, makes nvim stuff amazing!
 
-      { 'folke/neodev.nvim', opts = {} },
+      'folke/neodev.nvim',
     },
   },
   {
@@ -169,7 +175,10 @@ require('lazy').setup({
     },
     opts = {
       close_if_last_window = true, -- Close Neo-tree if it is the last window left in the tab
-      popup_border_style = 'rounded',
+      window = {
+        position = 'left',
+        width = 40,
+      },
     },
   },
   {
@@ -177,14 +186,16 @@ require('lazy').setup({
     event = 'VeryLazy',
     opts = {
       options = {
-        mode = 'buffers', -- set to "tabs" to only show tabpages instead
+        mode = 'buffers',
         always_show_bufferline = false,
         diagnostics = 'nvim_lsp',
         offsets = {
           {
             filetype = 'neo-tree',
-            text = 'File Explorer',
-            text_align = 'left',
+            text = function()
+              return vim.fn.getcwd()
+            end,
+            highlight = 'Directory',
             separator = true,
           },
         },
@@ -226,7 +237,6 @@ require('lazy').setup({
         section_separators = { left = '', right = '' },
       },
       extensions = { 'neo-tree' },
-      ignore_focus = { 'neo-tree' },
     },
   },
 
@@ -311,6 +321,9 @@ vim.o.cot = 'menuone,noselect'
 -- NOTE: You should make sure your terminal supports this
 vim.o.tgc = true
 
+--
+require('scope').setup { restore_state = true }
+
 -- [[ Basic Keymaps ]]
 
 -- Keymaps for better default experience
@@ -344,7 +357,7 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.open_float, { desc = 'Open float
 vim.keymap.set('n', '<leader>Q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
 -- NeoTree keymaps
-vim.keymap.set('n', '<M-e>', ':Neotree toggle <CR>', { silent = true })
+vim.keymap.set('n', '<M-e>', ':Neotree toggle left<CR>', { silent = true })
 vim.keymap.set('n', '<leader>e', ':Neotree focus left<CR>', { silent = true })
 -- lazygit keymaps
 vim.keymap.set('n', '<leader>gl', require('lazygit').lazygit, { desc = '[L]azygit', silent = true })
