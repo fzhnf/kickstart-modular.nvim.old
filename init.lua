@@ -26,7 +26,7 @@ require('lazy').setup({
   'tpope/vim-sleuth',
 
   -- enhanced tab scoping
-  'tiagovla/scope.nvim',
+  -- 'tiagovla/scope.nvim',
 
   -- icons for plugins dependencies
   'nvim-tree/nvim-web-devicons',
@@ -171,13 +171,12 @@ require('lazy').setup({
     dependencies = {
       'nvim-lua/plenary.nvim',
       'MunifTanjim/nui.nvim',
-      '3rd/image.nvim',
+      -- '3rd/image.nvim',
     },
     opts = {
-      close_if_last_window = true, -- Close Neo-tree if it is the last window left in the tab
       window = {
         position = 'left',
-        width = 40,
+        width = 30,
       },
     },
   },
@@ -320,9 +319,6 @@ vim.o.cot = 'menuone,noselect'
 
 -- NOTE: You should make sure your terminal supports this
 vim.o.tgc = true
-
---
-require('scope').setup { restore_state = true }
 
 -- [[ Basic Keymaps ]]
 
@@ -689,5 +685,3 @@ cmp.setup {
     { name = 'path' },
   },
 }
-
--- vim: ts=2 sts=2 sw=2 et
