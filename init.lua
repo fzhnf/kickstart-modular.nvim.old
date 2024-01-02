@@ -1,21 +1,16 @@
--- Set <space> as the leader key
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+require 'options'
 
--- delete buffer but keep the tab
-local function delete_buffer()
-  local bufnr = vim.fn.bufnr '%'
+local func = require 'functions'
 
-  -- Check if the file type is "neo-tree"
-  if vim.fn.getbufvar(bufnr, '&filetype') == 'neo-tree' then
-    -- If the file type is "neo-tree," return nothing
-    return
-  end
-  local ok, _ = pcall(vim.cmd, 'bprevious | bdelete #')
-  if not ok then
-    vim.cmd 'bdelete'
-  end
-end
+-- [[ Highlight on yank ]]
+local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
+vim.api.nvim_create_autocmd('TextYankPost', {
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+  group = highlight_group,
+  pattern = '*',
+})
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -41,7 +36,7 @@ require('lazy').setup({
   'tpope/vim-sleuth',
 
   -- enhanced tab scoping
-  { 'tiagovla/scope.nvim',  opts = {} },
+  { 'tiagovla/scope.nvim', opts = {} },
 
   -- icons for plugins dependencies
   'nvim-tree/nvim-web-devicons',
@@ -57,7 +52,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim',       opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
 
@@ -171,12 +166,21 @@ require('lazy').setup({
   {
     'catppuccin/nvim',
     name = 'catppuccin',
-    lazy = false,
+    priority = 1000,
     opts = {
       flavour = 'mocha',
+      integration = {
+        cmp = true,
+        gitsigns = true,
+        leap = true,
+        mason = true,
+        neotree = true,
+        telescope = true,
+        treesitter = true,
+        which_key = true,
+      },
     },
-    config = function(_, opts)
-      require('catppuccin').setup(opts)
+    config = function()
       vim.cmd.colorscheme 'catppuccin'
     end,
   },
@@ -186,12 +190,14 @@ require('lazy').setup({
     dependencies = {
       'nvim-lua/plenary.nvim',
       'MunifTanjim/nui.nvim',
-      -- '3rd/image.nvim',
     },
     opts = {
       window = {
         position = 'left',
         width = 30,
+        mappings = {
+          ['<space>'] = 'none',
+        },
       },
     },
   },
@@ -202,7 +208,7 @@ require('lazy').setup({
       options = {
         mode = 'buffers',
         diagnostics = 'nvim_lsp',
-        close_command = delete_buffer,
+        close_command = func.delete_buffer,
         offsets = {
           {
             filetype = 'neo-tree',
@@ -254,9 +260,6 @@ require('lazy').setup({
     },
   },
 
-  -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim',  opts = {} },
-
   -- Fuzzy Finder (files, lsp, etc)
   {
     'nvim-telescope/telescope.nvim',
@@ -280,108 +283,14 @@ require('lazy').setup({
     build = ':TSUpdate',
   },
 
-  require 'kickstart.plugins.autoformat',
-  --  require 'kickstart.plugins.debug',
+  require 'plugins.autoformat',
+  --  require 'plugins.debug',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  { import = 'custom.plugins' },
+  { import = 'plugins' },
 }, {})
 
--- [[ Setting options ]]
-
--- Move to next/previous line
-vim.opt.ww:append '<>[]hl'
-
--- indent
-vim.opt.et = true
-vim.opt.sw = 2
-vim.opt.si = true
-vim.opt.ts = 2
-vim.opt.sts = 2
-
--- Set highlight on search
-vim.o.hls = false
-
--- Make Hybrid line numbers default
-vim.wo.nu = true
-vim.wo.rnu = true
-
--- Enable mouse mode
-vim.o.mouse = 'a'
-
--- Sync clipboard between OS and Neovim.
-vim.o.cb = 'unnamedplus'
-
--- Enable break indent
-vim.o.bri = true
-
--- Save undo history
-vim.o.udf = true
-
--- Case-insensitive searching UNLESS \C or capital in search
-vim.o.ic = true
-vim.o.scs = true
-
--- Keep signcolumn on by default
-vim.wo.scl = 'yes'
-
--- Decrease update time
-vim.o.ut = 250
-vim.o.tm = 300
-
--- Set completeopt to have a better completion experience
-vim.o.cot = 'menuone,noselect'
-
--- NOTE: You should make sure your terminal supports this
-vim.o.tgc = true
-
--- [[ Basic Keymaps ]]
-
--- Keymaps for better default experience
-vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
-vim.keymap.set('n', ';', ':')
-
--- Remap for dealing with word wrap
-vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-
--- switch manage buffers
-vim.keymap.set('n', '<Tab>', ':bnext<CR>', { silent = true })
-vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { silent = true })
-
-vim.keymap.set('n', '<leader>x', delete_buffer, { silent = true })
--- toggle line number
-vim.keymap.set('n', '<leader>n', function()
-  vim.wo.number = not vim.wo.number
-end, { desc = 'Toggle line number' })
-vim.keymap.set('n', '<leader>N', function()
-  vim.wo.relativenumber = not vim.wo.relativenumber
-end, { desc = 'Toggle relative number' })
-
--- save file
-vim.keymap.set('n', '<C-s>', vim.cmd.update, { silent = true })
-
--- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>Q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
-
--- NeoTree keymaps
-vim.keymap.set('n', '<M-e>', ':Neotree toggle left<CR>', { silent = true })
-vim.keymap.set('n', '<leader>e', ':Neotree focus left<CR>', { silent = true })
--- lazygit keymaps
-vim.keymap.set('n', '<leader>gl', require('lazygit').lazygit, { desc = '[L]azygit', silent = true })
-
--- [[ Highlight on yank ]]
-local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
-vim.api.nvim_create_autocmd('TextYankPost', {
-  callback = function()
-    vim.highlight.on_yank()
-  end,
-  group = highlight_group,
-  pattern = '*',
-})
+require 'keymaps'
 
 require 'treesitter-setup'
 
