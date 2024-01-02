@@ -2,6 +2,21 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- delete buffer but keep the tab
+local function delete_buffer()
+  local bufnr = vim.fn.bufnr '%'
+
+  -- Check if the file type is "neo-tree"
+  if vim.fn.getbufvar(bufnr, '&filetype') == 'neo-tree' then
+    -- If the file type is "neo-tree," return nothing
+    return
+  end
+  local ok, _ = pcall(vim.cmd, 'bprevious | bdelete #')
+  if not ok then
+    vim.cmd 'bdelete'
+  end
+end
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -26,7 +41,7 @@ require('lazy').setup({
   'tpope/vim-sleuth',
 
   -- enhanced tab scoping
-  -- 'tiagovla/scope.nvim',
+  { 'tiagovla/scope.nvim', opts = {} },
 
   -- icons for plugins dependencies
   'nvim-tree/nvim-web-devicons',
@@ -186,8 +201,8 @@ require('lazy').setup({
     opts = {
       options = {
         mode = 'buffers',
-        always_show_bufferline = false,
         diagnostics = 'nvim_lsp',
+        close_command = delete_buffer,
         offsets = {
           {
             filetype = 'neo-tree',
@@ -333,8 +348,8 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- switch manage buffers
 vim.keymap.set('n', '<Tab>', ':bnext<CR>', { silent = true })
 vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { silent = true })
-vim.keymap.set('n', '<leader>x', ':bdelete<CR>', { silent = true })
 
+vim.keymap.set('n', '<leader>x', delete_buffer, { silent = true })
 -- toggle line number
 vim.keymap.set('n', '<leader>n', function()
   vim.wo.number = not vim.wo.number
@@ -610,7 +625,7 @@ local servers = {
   },
 }
 
--- Setup neovim lua configuration
+-- Setup neovide before lsp to avoid issues
 require('neodev').setup()
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
