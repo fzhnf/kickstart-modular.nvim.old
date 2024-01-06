@@ -11,10 +11,10 @@ return {
   'tpope/vim-sleuth',
 
   -- enhanced tab scoping
-  { 'tiagovla/scope.nvim',  opts = {} },
+  { 'tiagovla/scope.nvim', opts = {} },
 
   -- icons for plugins dependencies
-  'nvim-tree/nvim-web-devicons',
+  { 'nvim-tree/nvim-web-devicons', lazy = true },
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   {
@@ -27,7 +27,7 @@ return {
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim',       opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
 
@@ -151,13 +151,19 @@ return {
         smart_indent_cap = true,
         priority = 2,
       },
+      scope = { enabled = false },
+      exclude = {
+        filetypes = {
+          'help',
+          'neo-tree',
+          'lazy',
+          'mason',
+        },
+      },
     },
   },
-  {
-    -- "gc" to comment visual regions/lines
-    'numToStr/Comment.nvim',
-    opts = {},
-  },
+  -- "gc" to comment visual regions/lines
+  { 'numToStr/Comment.nvim', opts = {} },
   {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
@@ -174,7 +180,7 @@ return {
         component_separators = { left = '/', right = '(' },
         section_separators = { left = '', right = '' },
       },
-      extensions = { 'neo-tree' },
+      extensions = { 'neo-tree', 'lazy' },
     },
   },
 
