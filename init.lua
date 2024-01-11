@@ -97,30 +97,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
---
--- -- [[ resize splits if window got resized ]]
--- local resize_split_group = vim.api.nvim_create_augroup('SplitResize', { clear = true })
---
--- vim.api.nvim_create_autocmd({ 'VimResized' }, {
---   group = resize_split_group,
---   callback = function()
---     local current_tab = vim.fn.tabpagenr()
---     vim.cmd 'tabdo wincmd ='
---     vim.cmd('tabnext ' .. current_tab)
---   end,
--- })
---
--- -- [[ wrap and check for spell in text filetypes ]]
--- local wrap_spell_group = vim.api.nvim_create_augroup('SpellWrap', { clear = true })
--- vim.api.nvim_create_autocmd('FileType', {
---   group = wrap_spell_group,
---   pattern = { 'gitcommit', 'markdown' },
---   callback = function()
---     vim.opt_local.wrap = true
---     vim.opt_local.spell = true
---   end,
--- })
---
+
 require('utils').load_mappings 'general'
 
 require 'treesitter-setup'

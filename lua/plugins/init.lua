@@ -218,8 +218,7 @@ return {
     config = function()
       require('presence').setup {
         main_image = 'neovim',
-        neovim_image_text = '(◕ ̮ ◕)─✿❃',
-        enable_line_number = false,
+        neovim_image_text = '(◕ ̮ ◕)っ❃🌸💮🪷🌹🌺🌻🌼🌷🪻✿',
       }
     end,
   },
