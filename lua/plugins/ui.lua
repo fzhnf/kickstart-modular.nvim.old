@@ -1,3 +1,4 @@
+-- [[ UI PLUGINS ]]
 return {
   -- icons for plugins dependencies
   { 'nvim-tree/nvim-web-devicons', lazy = true },

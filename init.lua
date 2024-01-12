@@ -17,6 +17,10 @@ vim.opt.softtabstop = 2
 vim.opt.number = true
 vim.opt.relativenumber = true
 
+-- grep
+vim.opt.grepformat = '%f:%l:%c:%m'
+vim.opt.grepprg = 'rg --vimgrep'
+
 -- Enable mouse mode
 vim.o.mouse = 'a'
 
@@ -33,23 +37,19 @@ vim.o.undofile = true
 vim.o.ignorecase = true
 vim.o.smartcase = true
 
--- Keep signcolumn on by default
-vim.wo.signcolumn = 'yes'
-
 -- Decrease update time
 vim.o.ut = 250
 vim.o.updatetime = 250
 vim.o.timeoutlen = 300
-
--- grep
-vim.opt.grepformat = '%f:%l:%c:%m'
-vim.opt.grepprg = 'rg --vimgrep'
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
 
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
+
+-- Keep signcolumn on by default
+vim.wo.signcolumn = 'yes'
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -70,8 +70,6 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup {
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   spec = {
-    require 'plugins.autoformat',
-    --  require 'plugins.debug',
     { import = 'plugins' },
   },
   install = { colorscheme = { 'catppuccin' } },
@@ -102,10 +100,13 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
+-- [[ load general key mappings ]]
 require('utils').load_mappings 'general'
 
-require 'treesitter-setup'
-
-require 'lsp-setup'
-
-require 'cmp-setup'
+-- [[ require all setup configurations inside lua/configs ]]
+local configs = vim.fn.glob(vim.fn.stdpath 'config' .. '/lua/configs/*lua')
+configs = vim.split(configs, '\n')
+for _, path in ipairs(configs) do
+  local name = vim.split(path, '/')[#vim.split(path, '/')]:gsub('.lua', '')
+  require('configs/' .. name)
+end
