@@ -69,7 +69,11 @@ vim.opt.rtp:prepend(lazypath)
 -- [[ Configure plugins ]]
 require('lazy').setup {
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  spec = { { import = 'plugins' } },
+  spec = {
+    require 'plugins.autoformat',
+    --  require 'plugins.debug',
+    { import = 'plugins' },
+  },
   install = { colorscheme = { 'catppuccin' } },
   performance = {
     rtp = {
