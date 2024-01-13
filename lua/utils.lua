@@ -20,7 +20,7 @@ function M.delete_buffer()
   end
   local ok, _ = pcall(vim.cmd, 'bprevious | ' .. delete .. '#')
   if not ok then
-    vim.cmd(delete)
+    vim.cmd 'delete|Alpha'
   end
 end
 

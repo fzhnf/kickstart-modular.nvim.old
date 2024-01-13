@@ -3,10 +3,6 @@
 --
 -- See the kickstart.nvim README for more information
 return {
-  -- Git related plugins
-  'tpope/vim-fugitive',
-  'tpope/vim-rhubarb',
-
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
 
@@ -15,22 +11,8 @@ return {
 
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
-  {
-    -- Adds git related signs to the gutter, as well as utilities for managing changes
-    'lewis6991/gitsigns.nvim',
-    opts = {
-      signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-      on_attach = function(bufnr)
-        require('utils').load_mappings('gitsigns', { buffer = bufnr })
-      end,
-    },
-  },
+
+  -- coloscheme
   {
     'catppuccin/nvim',
     name = 'catppuccin',
@@ -60,12 +42,6 @@ return {
       -- opleader = { line = 'gc', block = 'gb' },
       -- extra = { above = 'gcO', below = 'gco', eol = 'gcA' },
     },
-  },
-  {
-    -- Highlight, edit, and navigate code
-    'nvim-treesitter/nvim-treesitter',
-    dependencies = 'nvim-treesitter/nvim-treesitter-textobjects',
-    build = ':TSUpdate',
   },
 
   {
@@ -104,11 +80,7 @@ return {
       }
     end,
   },
-  {
-    'kdheepak/lazygit.nvim',
-    cmd = 'LazyGit',
-    event = 'VeryLazy',
-  },
 
-  { 'windwp/nvim-ts-autotag', opts = {}, event = 'InsertEnter' },
+  { 'windwp/nvim-ts-autotag',  opts = {},     event = 'InsertEnter' },
+  { 'akinsho/toggleterm.nvim', version = '*', opts = {} },
 }
