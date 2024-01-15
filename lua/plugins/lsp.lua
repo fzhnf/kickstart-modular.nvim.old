@@ -8,7 +8,7 @@ return {
     'williamboman/mason-lspconfig.nvim',
 
     -- Useful status updates for LSP
-    { 'j-hui/fidget.nvim', opts = {} },
+    { 'j-hui/fidget.nvim',       opts = {} },
 
     -- Additional lua configuration, makes nvim stuff amazing!
     'folke/neodev.nvim',
@@ -35,6 +35,11 @@ return {
 
             -- cpp
             b.formatting.clang_format,
+
+            -- go
+            b.formatting.goimports_reviser,
+            b.formatting.gofumpt,
+            b.formatting.golines,
           },
         }
       end,

@@ -2,10 +2,10 @@ local M = {}
 
 function M.delete_buffer()
   local bufnr = vim.fn.bufnr '%'
-  local delete = 'bdelete'
-  -- Check if the file type is "neo-tree"
-  if vim.fn.getbufvar(bufnr, '&filetype') == 'neo-tree' then
-    -- If the file type is "neo-tree," return nothing
+  local delete_cmd = 'bdelete'
+  local excluded_filetypes = { 'alpha', 'startify', 'dashboard', 'neo-tree', 'toggleterm', 'lazygit', 'lazy', 'mason' }
+  -- Check if the file type is in excluded file types, if so, don't delete
+  if vim.tbl_contains(excluded_filetypes, vim.bo.filetype) then
     return
   end
   if vim.bo.modified then
@@ -13,14 +13,14 @@ function M.delete_buffer()
     if choice == 1 then
       vim.cmd 'silent !w'
     elseif choice == 2 then
-      delete = delete .. '!'
+      delete_cmd = delete_cmd .. '!'
     else
       return
     end
   end
-  local ok, _ = pcall(vim.cmd, 'bprevious | ' .. delete .. '#')
+  local ok, _ = pcall(vim.cmd, 'bprevious | ' .. delete_cmd .. '#')
   if not ok then
-    vim.cmd 'delete|Alpha'
+    vim.cmd(delete_cmd .. '|Alpha')
   end
 end
 

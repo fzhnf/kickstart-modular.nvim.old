@@ -105,8 +105,8 @@ require('utils').load_mappings 'general'
 
 -- [[ require all setup configurations inside lua/configs ]]
 local configs = vim.fn.glob(vim.fn.stdpath 'config' .. '/lua/configs/*lua')
-configs = vim.split(configs, '\n')
-for _, path in ipairs(configs) do
+local configs_as_list = vim.split(configs, '\n')
+for _, path in ipairs(configs_as_list) do
   local name = vim.split(path, '/')[#vim.split(path, '/')]:gsub('.lua', '')
   require('configs/' .. name)
 end
