@@ -28,12 +28,12 @@ M.general = {
     { desc = 'Toggle relative number' },
   },
   { 'n',          '<C-s>',           vim.cmd.update,                                   { silent = true } },
-  { 'n',          '<Tab>',           ':bnext<CR>',                                     { silent = true } },
-  { 'n',          '<S-Tab>',         ':bprevious<CR>',                                 { silent = true } },
+  { 'n',          '<Tab>',           '<cmd>bnext<CR>',                                 { silent = true } },
+  { 'n',          '<S-Tab>',         '<cmd>bprevious<CR>',                             { silent = true } },
   { 'n',          '<leader>x',       require('utils').delete_buffer,                   { desc = 'Delete buffer' } },
-  { 'n',          '<leader><Tab>',   ':tabnext<CR>',                                   { silent = true } },
-  { 'n',          '<leader><S-Tab>', ':tabprevious<CR>',                               { silent = true } },
-  { 'n',          '<C-w>t',          ':tabnew<CR>',                                    { desc = 'create new tab', silent = true } },
+  { 'n',          '<leader><Tab>',   '<cmd>tabnext<CR>',                               { silent = true } },
+  { 'n',          '<leader><S-Tab>', '<cmd>tabprevious<CR>',                           { silent = true } },
+  { 'n',          '<C-w>t',          '<cmd>tabnew<CR>',                                { desc = 'create new tab', silent = true } },
   { { 'n', 'v' }, '[d',              vim.diagnostic.goto_prev,                         { desc = 'Go to previous diagnostic message' } },
   { { 'n', 'v' }, ']d',              vim.diagnostic.goto_next,                         { desc = 'Go to next diagnostic message' } },
   { 'n',          '<leader>q',       vim.diagnostic.open_float,                        { desc = 'Open floating diagnostic message' } },
@@ -41,9 +41,9 @@ M.general = {
   { 'n',          '<leader>e',       ':Neotree focus left<CR>',                        { silent = true } },
   { 'n',          '<M-e>',           ':Neotree toggle left<CR>',                       { silent = true } },
   { 'n',          '<leader>gl',      require('lazygit').lazygit,                       { desc = '[L]azygit', silent = true } },
-  { 'n',          '<C-[>',           ':ToggleTerm direction=horizontal<CR>',           { desc = 'Open terminal horizontally', silent = true } },
-  { 'n',          '<C-]>',           ':ToggleTerm direction=vertical size=40<CR>',     { desc = 'Open terminal vertically', silent = true } },
-  { 'n',          '<C-\\>',          ':ToggleTerm direction=float<CR>',                { desc = 'Open floating terminal ', silent = true } },
+  { 'n',          '<C-[>',           '<cmd>ToggleTerm direction=horizontal<CR>',       { desc = 'Open terminal horizontally', silent = true } },
+  { 'n',          '<C-]>',           '<cmd>ToggleTerm direction=vertical size=40<CR>', { desc = 'Open terminal vertically', silent = true } },
+  { 'n',          '<C-\\>',          '<cmd>ToggleTerm direction=float<CR>',            { desc = 'Open floating terminal ', silent = true } },
   { 't',          '<C-[>',           '<cmd>ToggleTerm direction=horizontal<CR>',       { desc = 'Open terminal horizontally', silent = true } },
   { 't',          '<C-]>',           '<cmd>ToggleTerm direction=vertical size=40<CR>', { desc = 'Open terminal vertically', silent = true } },
   { 't',          '<C-\\>',          '<cmd>ToggleTerm direction=float<CR>',            { desc = 'Open floating terminal', silent = true } },
@@ -53,20 +53,21 @@ M.general = {
   { 't',          '<C-w>l',          '<cmd>wincmd l<CR>',                              { silent = true } },
 }
 
+local tlb = require 'telescope.builtin'
 M.lsp = {
-  { 'n', '<leader>rn', vim.lsp.buf.rename,                                         { desc = '[R]e[n]ame' } },
-  { 'n', '<leader>ca', vim.lsp.buf.code_action,                                    { desc = '[C]ode [A]ction' } },
-  { 'n', 'gd',         require('telescope.builtin').lsp_definitions,               { desc = '[G]oto [D]efinition' } },
-  { 'n', 'gr',         require('telescope.builtin').lsp_references,                { desc = '[G]oto [R]eferences' } },
-  { 'n', 'gI',         require('telescope.builtin').lsp_implementations,           { desc = '[G]oto [I]mplementation' } },
-  { 'n', '<leader>D',  require('telescope.builtin').lsp_type_definitions,          { desc = 'Type [D]efinition' } },
-  { 'n', '<leader>ds', require('telescope.builtin').lsp_document_symbols,          { desc = '[D]ocument [S]ymbols' } },
-  { 'n', '<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, { desc = '[W]orkspace [S]ymbols' } },
-  { 'n', 'K',          vim.lsp.buf.hover,                                          { desc = 'Hover Documentation' } },
-  { 'n', '<C-k>',      vim.lsp.buf.signature_help,                                 { desc = 'Signature Documentation' } },
-  { 'n', 'gD',         vim.lsp.buf.declaration,                                    { desc = '[G]oto [D]eclaration' } },
-  { 'n', '<leader>wa', vim.lsp.buf.add_workspace_folder,                           { desc = '[W]orkspace [A]dd Folder' } },
-  { 'n', '<leader>wr', vim.lsp.buf.remove_workspace_folder,                        { desc = '[W]orkspace [R]emove Folder' } },
+  { 'n', '<leader>rn', vim.lsp.buf.rename,                  { desc = '[R]e[n]ame' } },
+  { 'n', '<leader>ca', vim.lsp.buf.code_action,             { desc = '[C]ode [A]ction' } },
+  { 'n', 'gd',         tlb.lsp_definitions,                 { desc = '[G]oto [D]efinition' } },
+  { 'n', 'gr',         tlb.lsp_references,                  { desc = '[G]oto [R]eferences' } },
+  { 'n', 'gI',         tlb.lsp_implementations,             { desc = '[G]oto [I]mplementation' } },
+  { 'n', '<leader>D',  tlb.lsp_type_definitions,            { desc = 'Type [D]efinition' } },
+  { 'n', '<leader>ds', tlb.lsp_document_symbols,            { desc = '[D]ocument [S]ymbols' } },
+  { 'n', '<leader>ws', tlb.lsp_dynamic_workspace_symbols,   { desc = '[W]orkspace [S]ymbols' } },
+  { 'n', 'K',          vim.lsp.buf.hover,                   { desc = 'Hover Documentation' } },
+  { 'n', '<C-k>',      vim.lsp.buf.signature_help,          { desc = 'Signature Documentation' } },
+  { 'n', 'gD',         vim.lsp.buf.declaration,             { desc = '[G]oto [D]eclaration' } },
+  { 'n', '<leader>wa', vim.lsp.buf.add_workspace_folder,    { desc = '[W]orkspace [A]dd Folder' } },
+  { 'n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, { desc = '[W]orkspace [R]emove Folder' } },
   {
     'n',
     '<leader>wl',
@@ -81,6 +82,45 @@ for i, map in ipairs(M.lsp) do
     M.lsp[i][4]['desc'] = 'LSP: ' .. map[4]['desc']
   end
 end
+
+M.telescope = {
+  { 'n', '<leader>?',       tlb.oldfiles, { desc = 'Find recently opened files' } },
+  { 'n', '<leader><space>', tlb.buffers,  { desc = 'Find existing buffers' } },
+  {
+    'n',
+    '<leader>/',
+    function()
+      -- You can pass additional configuration to telescope to change theme, layout, etc.
+      tlb.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+        winblend = 10,
+        previewer = false,
+      })
+    end,
+    { desc = 'Fuzzily search in current buffer' },
+  },
+  { 'n', '<leader>sc', tlb.commands,                                { desc = 'Search Commands' } },
+  {
+    'n',
+    '<leader>s/',
+    function()
+      tlb.live_grep {
+        grep_open_files = true,
+        prompt_title = 'Live Grep in Open Files',
+      }
+    end,
+    { desc = 'Search in Open Files' },
+  },
+  { 'n', '<leader>ss', tlb.builtin,                                 { desc = 'Search Select Telescope' } },
+  { 'n', '<leader>gf', tlb.git_files,                               { desc = 'Search Git Files' } },
+  { 'n', '<leader>sf', tlb.find_files,                              { desc = 'Search Files' } },
+  { 'n', '<leader>sh', tlb.help_tags,                               { desc = 'Search Help' } },
+  { 'n', '<leader>sw', tlb.grep_string,                             { desc = 'Search current Word' } },
+  { 'n', '<leader>sg', tlb.live_grep,                               { desc = 'Search by Grep' } },
+  { 'n', '<leader>sG', '<cmd>LiveGrepGitRoot<CR>',                  { desc = 'Search by Grep on Git Root' } },
+  { 'n', '<leader>sd', tlb.diagnostics,                             { desc = 'Search Diagnostics' } },
+  { 'n', '<leader>sr', tlb.resume,                                  { desc = 'Search Resume' } },
+  { 'n', '<leader>sl', require('telescope').extensions.zoxide.list, { desc = 'Search Zoxide List' } },
+}
 
 local gs = require 'gitsigns'
 M.gitsigns = {
@@ -142,7 +182,7 @@ M.gitsigns = {
     end,
     { desc = 'git blame line' },
   },
-  { 'n',          '<leader>hd', gs.diffthis,                      { desc = 'git diff against index' } },
+  { 'n',          '<leader>hd', gs.diffthis,                          { desc = 'git diff against index' } },
   {
     'n',
     '<leader>hD',
@@ -151,49 +191,9 @@ M.gitsigns = {
     end,
     { desc = 'git diff against last commit' },
   },
-  { 'n',          '<leader>tb', gs.toggle_current_line_blame,     { desc = 'toggle git blame line' } },
-  { 'n',          '<leader>td', gs.toggle_deleted,                { desc = 'toggle git show deleted' } },
-  { { 'o', 'x' }, 'ih',         ':<C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' } },
-}
-
-local tlb = require 'telescope.builtin'
-M.telescope = {
-  { 'n', '<leader>?',       tlb.oldfiles, { desc = 'Find recently opened files' } },
-  { 'n', '<leader><space>', tlb.buffers,  { desc = 'Find existing buffers' } },
-  {
-    'n',
-    '<leader>/',
-    function()
-      -- You can pass additional configuration to telescope to change theme, layout, etc.
-      tlb.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-        winblend = 10,
-        previewer = false,
-      })
-    end,
-    { desc = 'Fuzzily search in current buffer' },
-  },
-  { 'n', '<leader>sc', tlb.commands,                                { desc = 'Search Commands' } },
-  {
-    'n',
-    '<leader>s/',
-    function()
-      tlb.live_grep {
-        grep_open_files = true,
-        prompt_title = 'Live Grep in Open Files',
-      }
-    end,
-    { desc = 'Search in Open Files' },
-  },
-  { 'n', '<leader>ss', tlb.builtin,                                 { desc = 'Search Select Telescope' } },
-  { 'n', '<leader>gf', tlb.git_files,                               { desc = 'Search Git Files' } },
-  { 'n', '<leader>sf', tlb.find_files,                              { desc = 'Search Files' } },
-  { 'n', '<leader>sh', tlb.help_tags,                               { desc = 'Search Help' } },
-  { 'n', '<leader>sw', tlb.grep_string,                             { desc = 'Search current Word' } },
-  { 'n', '<leader>sg', tlb.live_grep,                               { desc = 'Search by Grep' } },
-  { 'n', '<leader>sG', ':LiveGrepGitRoot<cr>',                      { desc = 'Search by Grep on Git Root' } },
-  { 'n', '<leader>sd', tlb.diagnostics,                             { desc = 'Search Diagnostics' } },
-  { 'n', '<leader>sr', tlb.resume,                                  { desc = 'Search Resume' } },
-  { 'n', '<leader>sl', require('telescope').extensions.zoxide.list, { desc = 'Search Zoxide List' } },
+  { 'n',          '<leader>tb', gs.toggle_current_line_blame,         { desc = 'toggle git blame line' } },
+  { 'n',          '<leader>td', gs.toggle_deleted,                    { desc = 'toggle git show deleted' } },
+  { { 'o', 'x' }, 'ih',         '<cmd><C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' } },
 }
 
 return M

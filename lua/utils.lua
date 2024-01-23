@@ -1,5 +1,7 @@
+-- empty table to store functions that will be used many times in the config
 local M = {}
 
+-- function to add some behaviour for deleting buffers
 function M.delete_buffer()
   local bufnr = vim.fn.bufnr '%'
   local delete_cmd = 'bdelete'
@@ -18,12 +20,13 @@ function M.delete_buffer()
       return
     end
   end
-  local ok, _ = pcall(vim.cmd, 'bprevious | ' .. delete_cmd .. '#')
+  local ok, _ = pcall(vim.cmd, 'bprevious|' .. delete_cmd .. '#')
   if not ok then
-    vim.cmd(delete_cmd .. '|Alpha')
+    vim.cmd('Alpha|' .. delete_cmd .. '#')
   end
 end
 
+-- function to load mappings from special files mappings.lua
 function M.load_mappings(section, mapping_opts)
   mapping_opts = mapping_opts or {}
   local maps = require('mappings')[section]
