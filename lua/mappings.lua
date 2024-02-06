@@ -56,7 +56,14 @@ M.general = {
 local tlb = require 'telescope.builtin'
 M.lsp = {
   { 'n', '<leader>rn', vim.lsp.buf.rename,                  { desc = '[R]e[n]ame' } },
-  { 'n', '<leader>ca', vim.lsp.buf.code_action,             { desc = '[C]ode [A]ction' } },
+  {
+    'n',
+    '<leader>ca',
+    function()
+      vim.lsp.buf.code_action { context = { only = { 'quickfix', 'refactor', 'source' } } }
+    end,
+    { desc = '[C]ode [A]ction' },
+  },
   { 'n', 'gd',         tlb.lsp_definitions,                 { desc = '[G]oto [D]efinition' } },
   { 'n', 'gr',         tlb.lsp_references,                  { desc = '[G]oto [R]eferences' } },
   { 'n', 'gI',         tlb.lsp_implementations,             { desc = '[G]oto [I]mplementation' } },

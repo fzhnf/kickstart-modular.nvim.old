@@ -17,25 +17,26 @@ return {
     'catppuccin/nvim',
     name = 'catppuccin',
     priority = 1000,
-    opts = {
-      flavour = 'mocha',
-      integration = {
-        cmp = true,
-        gitsigns = true,
-        leap = true,
-        mason = true,
-        neotree = true,
-        telescope = true,
-        treesitter = true,
-        which_key = true,
-      },
-    },
+    lazy = false,
     config = function()
+      require('catppuccin').setup {
+        flavour = 'mocha',
+        integration = {
+          cmp = true,
+          gitsigns = true,
+          leap = true,
+          mason = true,
+          neotree = true,
+          telescope = true,
+          treesitter = true,
+          which_key = true,
+        },
+      }
       vim.cmd.colorscheme 'catppuccin'
     end,
   },
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim',   opts = {} },
+  { 'numToStr/Comment.nvim',   opts = {}, event = 'BufRead' },
 
   {
     -- Highlight, edit, and navigate code
@@ -77,6 +78,6 @@ return {
     end,
   },
 
-  { 'windwp/nvim-ts-autotag',  opts = {},     event = 'InsertEnter' },
-  { 'akinsho/toggleterm.nvim', version = '*', opts = {} },
+  { 'windwp/nvim-ts-autotag',  opts = {}, event = 'InsertEnter' },
+  { 'akinsho/toggleterm.nvim', opts = {}, event = 'VeryLazy' },
 }

@@ -20,6 +20,7 @@ vim.defer_fn(function()
     },
 
     auto_install = true,
+    sync_install = true,
 
     highlight = { enable = true },
     indent = { enable = true },
