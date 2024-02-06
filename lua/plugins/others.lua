@@ -35,20 +35,16 @@ return {
     end,
   },
   -- "gc" to comment visual regions/lines
-  {
-    'numToStr/Comment.nvim',
-    opts = {
-      -- toggler = { line = 'gcc', block = 'gbc' },
-      -- opleader = { line = 'gc', block = 'gb' },
-      -- extra = { above = 'gcO', below = 'gco', eol = 'gcA' },
-    },
-  },
+  { 'numToStr/Comment.nvim',   opts = {} },
 
   {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
-    dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' },
+    version = false, -- last release is way too old and doesn't work on Windows
     build = ':TSUpdate',
+    event = 'VeryLazy',
+    dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' },
+    cmd = { 'TSUpdateSync', 'TSUpdate', 'TSInstall' },
   },
 
   {
