@@ -51,6 +51,21 @@ vim.o.termguicolors = true
 -- Keep signcolumn on by default
 vim.wo.signcolumn = 'yes'
 
+-- [[ disable neovim providers]]
+for _, provider in ipairs { 'node', 'perl', 'python3', 'ruby' } do
+  vim.g['loaded_' .. provider .. '_provider'] = 0
+end
+
+-- [[ Highlight on yank ]]
+local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
+vim.api.nvim_create_autocmd('TextYankPost', {
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+  group = highlight_group,
+  pattern = '*',
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -70,6 +85,7 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup {
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   spec = {
+
     { import = 'plugins' },
   },
   install = { colorscheme = { 'catppuccin' } },
@@ -90,16 +106,6 @@ require('lazy').setup {
   },
 }
 
--- [[ Highlight on yank ]]
-local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
-vim.api.nvim_create_autocmd('TextYankPost', {
-  callback = function()
-    vim.highlight.on_yank()
-  end,
-  group = highlight_group,
-  pattern = '*',
-})
-
 -- [[ load general key mappings ]]
 require('utils').load_mappings 'general'
 
@@ -109,9 +115,4 @@ local configs_as_list = vim.split(configs, '\n')
 for _, path in ipairs(configs_as_list) do
   local name = vim.split(path, '/')[#vim.split(path, '/')]:gsub('.lua', '')
   require('configs/' .. name)
-end
-
--- [[ disable neovim providers]]
-for _, provider in ipairs { 'node', 'perl', 'python3', 'ruby' } do
-  vim.g['loaded_' .. provider .. '_provider'] = 0
 end

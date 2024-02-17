@@ -76,6 +76,7 @@ return {
         always_show_bufferline = false,
       },
     },
+
     config = function(_, opts)
       require('bufferline').setup(opts)
       -- Fix bufferline when restoring a session

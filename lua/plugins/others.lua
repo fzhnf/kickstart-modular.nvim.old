@@ -46,6 +46,9 @@ return {
     event = 'VeryLazy',
     dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' },
     cmd = { 'TSUpdateSync', 'TSUpdate', 'TSInstall' },
+    config = function()
+      require("configs.nvim-treesitter")
+    end
   },
 
   {
@@ -80,4 +83,6 @@ return {
 
   { 'windwp/nvim-ts-autotag',  opts = {}, event = 'InsertEnter' },
   { 'akinsho/toggleterm.nvim', opts = {}, event = 'VeryLazy' },
+  { "LunarVim/bigfile.nvim", opts = {}, event= 'BufRead'}
+
 }
