@@ -1,5 +1,7 @@
--- function to add some behaviour for deleting buffers
+-- empty table to store functions that will be used many times in the config
 local M = {}
+
+-- function to add some behaviour for deleting buffers
 function M.close_buffer()
   local bufnr = vim.fn.bufnr '%'
   local delete_cmd = 'bdelete'
