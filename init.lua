@@ -14,8 +14,6 @@ vim.wo.number = true
 vim.o.mouse = 'a'
 
 -- Sync clipboard between OS and Neovim.
---  Remove this option if you want your OS clipboard to remain independent.
---  See `:help 'clipboard'`
 vim.o.clipboard = 'unnamedplus'
 
 -- Enable break indent
@@ -44,8 +42,8 @@ vim.o.termguicolors = true
 
 -- indent
 vim.opt.expandtab = true
-vim.opt.shiftwidth = 2
 vim.opt.smartindent = true
+vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
 
@@ -57,7 +55,7 @@ vim.opt.relativenumber = true
 vim.opt.grepformat = '%f:%l:%c:%m'
 vim.opt.grepprg = 'rg --vimgrep'
 
--- Move to next/previous line
+-- Move to next/previous line when at the end of a line
 vim.opt.whichwrap:append '<>[]hl'
 
 
@@ -118,7 +116,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
-
 
 
 -- vim: ts=2 sts=2 sw=2 et

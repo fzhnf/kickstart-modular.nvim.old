@@ -22,7 +22,6 @@ return {
   {
     'nvimtools/none-ls.nvim',
     config = function()
-      require('null-ls').setup()
       require('configs.null-ls-setup')
     end
   },
@@ -58,3 +57,6 @@ return {
     end,
   },
 }
+
+
+-- vim: ts=2 sts=2 sw=2 et

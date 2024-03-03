@@ -52,16 +52,19 @@ return {
       }
     end,
   },
-  { "tiagovla/scope.nvim" ,
+  {
+    "tiagovla/scope.nvim",
     opts = {},
     config = function(_, opts)
       vim.opt.sessionoptions = {
-          "buffers",
-          "tabpages",
-          "globals",
+        "buffers",
+        "tabpages",
+        "globals",
       }
       require("scope").setup(opts)
     end,
   },
   { 'LunarVim/bigfile.nvim', opts = {}, event = 'BufRead' },
 }
+
+-- vim: ts=2 sts=2 sw=2 et
