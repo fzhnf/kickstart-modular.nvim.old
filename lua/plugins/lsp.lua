@@ -4,32 +4,60 @@ return {
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs to stdpath for neovim
-      { 'williamboman/mason.nvim', config = true },
+      'williamboman/mason.nvim',
       'williamboman/mason-lspconfig.nvim',
+      'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP
-      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim',       opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
     },
     config = function()
-      require('configs.lsp-setup')
+      require 'configs.lsp-setup'
     end,
   },
 
-  {
-    'nvimtools/none-ls.nvim',
-    config = function()
-      require('configs.null-ls-setup')
-    end
+  { -- Autoformat
+    'stevearc/conform.nvim',
+    opts = {
+      notify_on_error = false,
+      format_on_save = {
+        timeout_ms = 500,
+        lsp_fallback = true,
+      },
+      formatters_by_ft = {
+        lua = { 'stylua' },
+        javascript = { 'prettierd' },
+        html = { 'prettierd' },
+        css = { 'prettierd' },
+        markdown = { 'prettierd' },
+        yaml = { 'prettierd' },
+        python = { 'isort', 'black' },
+        rust = { 'rustfmt' },
+        cpp = { 'clang_format' },
+      },
+    },
   },
 
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
+    event = 'InsertEnter',
     dependencies = {
+      {
+        'windwp/nvim-autopairs',
+        -- Optional dependency
+        config = function()
+          require('nvim-autopairs').setup {}
+          -- If you want to automatically add `(` after selecting a function or method
+          local cmp_autopairs = require 'nvim-autopairs.completion.cmp'
+          local cmp = require 'cmp'
+          cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
+        end,
+      },
+
       -- Snippet Engine & its associated nvim-cmp source
       {
         'L3MON4D3/LuaSnip',
@@ -53,10 +81,9 @@ return {
       'rafamadriz/friendly-snippets',
     },
     config = function()
-      require('configs.cmp-setup')
+      require 'configs.cmp-setup'
     end,
   },
 }
-
 
 -- vim: ts=2 sts=2 sw=2 et

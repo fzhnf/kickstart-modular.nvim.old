@@ -23,9 +23,12 @@ vim.keymap.set('n', 'k', 'v:count == 0 ? "gk" : "k"', { expr = true, silent = tr
 vim.keymap.set('n', 'j', 'v:count == 0 ? "gj" : "j"', { expr = true, silent = true })
 
 -- toggle numbers
-vim.keymap.set('n', '<leader>n', function() vim.wo.number = not vim.wo.number end, { desc = 'Toggle line numbers' })
-vim.keymap.set('n', '<leader>rn', function() vim.wo.relativenumber = not vim.wo.relativenumber end,
-  { desc = 'Toggle relative line numbers' })
+vim.keymap.set('n', '<leader>n', function()
+  vim.wo.number = not vim.wo.number
+end, { desc = 'Toggle line numbers' })
+vim.keymap.set('n', '<leader>N', function()
+  vim.wo.relativenumber = not vim.wo.relativenumber
+end, { desc = 'Toggle relative line numbers' })
 
 -- save the file
 vim.keymap.set('n', '<C-s>', vim.cmd.update)
@@ -44,6 +47,5 @@ vim.keymap.set('n', '<leader><S-Tab>', vim.cmd.tabprevious, { desc = 'Move to th
 vim.keymap.set('n', '<leader>x', require('utils').close_buffer, { desc = 'Close the current buffer' })
 vim.keymap.set('n', '<Tab>', '<cmd>BufferLineCycleNext<cr>', { desc = 'Move to the next buffer' })
 vim.keymap.set('n', '<S-Tab>', '<cmd>BufferLineCyclePrev<cr>', { desc = 'Move to the previous buffer' })
-
 
 -- vim: ts=2 sts=2 sw=2 et

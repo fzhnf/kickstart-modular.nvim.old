@@ -15,7 +15,6 @@ return {
       integration = {
         cmp = true,
         gitsigns = true,
-        leap = true,
         mason = true,
         neotree = true,
         telescope = true,
@@ -28,6 +27,9 @@ return {
       vim.cmd.colorscheme 'catppuccin'
     end,
   },
+  -- Highlight todo, notes, etc in comments
+  { 'folke/todo-comments.nvim', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
   {
@@ -53,15 +55,24 @@ return {
     end,
   },
   {
-    "tiagovla/scope.nvim",
+    'tiagovla/scope.nvim',
     opts = {},
     config = function(_, opts)
       vim.opt.sessionoptions = {
-        "buffers",
-        "tabpages",
-        "globals",
+        'buffers',
+        'tabpages',
+        'globals',
       }
-      require("scope").setup(opts)
+      require('scope').setup(opts)
+    end,
+  },
+  {
+    'rmagatti/auto-session',
+    config = function()
+      require('auto-session').setup {
+        log_level = 'error',
+        auto_session_suppress_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
+      }
     end,
   },
   { 'LunarVim/bigfile.nvim', opts = {}, event = 'BufRead' },
